@@ -3,6 +3,7 @@
 
 import sys
 from Crypto.Cipher import AES
+import binascii
 
 
 # Definiera, crypteringsläge, nycklar (128 bit) och ciphertexter.
@@ -23,17 +24,59 @@ c_raw = ['4ca00ff4c898d61e1edbf1800618fb2828a226d160dad07883d04e008a7897ee2e4b74
 
 # Huvudfunktion
 def main(k_raw):
+    # Kontrollera att det finns lika många nycklar som ciphertexter.
     check_len(k_raw, c_raw)
+    # Dela upp hex-strängen i block om 32 hex-tecken.
     k_blocks = raw2blocks(k_raw)
     c_blocks = raw2blocks(c_raw)
+    # Ta ut initieringsvektorn från varje ciphertext.
     i_vec = ivec(c_blocks)
+
+    output = cbc_full(i_vec[0], k_blocks[0], c_blocks[0])
+
+
+
+
+
+#####################################################################
+######################### Hjälpfunktioner ###########################
+#####################################################################
+
+
+def cbc_full(iv_hex, key_hex, c_text_hex):
+    iv = iv_hex
+    out = []
+    for i in list(range(len(c_text_hex))):
+        temp_plain = cbc_dec(iv, key_hex[0], c_text_hex[i])
+        iv = temp_plain
+        out.append(temp_plain)
+
+def cbc_dec(iv_hex, key_hex, c_text_hex):
+    print(iv_hex)
+    print(key_hex)
+    print(c_text_hex)
+
+    iv = binascii.unhexlify(iv_hex)
+
+
+
+    #key_str = "".join(key_hex)
+    #c_text_str = "".join(c_text_hex)
+    #iv_str = "".join(iv_hex)
+    #out = decrypt(key_bin, c_text_bin) ^ iv_bin
+    #return(out)
+
+
+
+
+
 
 def ivec(raw):
     i_vec = []
     for x in list(range(len(raw))):
         c_list = (raw[x])
         i_vec.append(c_list[0])
-    return (i_vec)
+    return(i_vec)
 
 
 
@@ -78,9 +121,9 @@ def raw2blocks(raw):
         list_out.append(temp_block)
     return(list_out)
 
-
-
-# Definiera objektet cipher
-# cipher = AES.new(k[1], AES.MODE_ECB)
+def decrypt(key, c_text):
+    cipher = AES.new(key, AES.MODE_ECB)
+    output = cipher.decrypt(c_text)
+    return(output)
 
 main(k_raw)
