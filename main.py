@@ -21,16 +21,25 @@ c_raw = ['4ca00ff4c898d61e1edbf1800618fb2828a226d160dad07883d04e008a7897ee2e4b74
     	'69dda8455c7dd4254bf353b773304eec0ec7702330098ce7f7520d1cbbb20fc388d1b0adb5054dbd7370849dbf0b88d393f252e764f1f5f7ad97ef79d59ce29f5f51eeca32eabedd9afa9329',
     	'770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa0e311bde9d4e01726d3184c34451']
 
-
+# Huvudfunktion
 def main(k_raw):
     check_len(k_raw, c_raw)
-    k_str = raw2list(k_raw)
-    c_str = raw2list(c_raw)
-    print(k_str)
+    k_blocks = raw2blocks(k_raw)
+    c_blocks = raw2blocks(c_raw)
+    i_vec = ivec(c_blocks)
 
-print('Jämför storlek på nycklar och ciphertext')
+def ivec(raw):
+    i_vec = []
+    for x in list(range(len(raw))):
+        c_list = (raw[x])
+        i_vec.append(c_list[0])
+    return (i_vec)
 
+
+
+# Funktion för att kontrollera att det finns lika många nycklar som ciphertexter.
 def check_len(str1, str2):
+    print('Jämför storlek på nycklar och ciphertext')
     if len(str1) == len(str2):
             print('Storlek på vektorer OK!')
             return
@@ -38,6 +47,7 @@ def check_len(str1, str2):
             print('Fel storlek på nyckelvektor eller ciphertextvektor!')
             return
 
+# Funktion för att göra om strängar till listor med en bokstav i varje plats.
 def raw2list(raw):
     final_list=[]
     until_list_i = list(range(len(raw)))
@@ -50,15 +60,23 @@ def raw2list(raw):
         final_list.append(temp_chars_j)
     return(final_list)
 
-    #for i in until_list:
-	#templist = list(raw[i])
-	#for j in raw[i]:
-	#    list.append(j)
-	#print(list[i])
-
-
-
-
+# Funktion för att dela upp de råa strängarna i block
+def raw2blocks(raw):
+    block_length = 32 # 128 bitar blir 32 hex-värden.
+    list_out = []
+    separated_lists = raw2list(raw)
+    until_list_i = list(range(len(raw)))
+    for i in until_list_i:
+        row_i = raw[i]
+        list_len = (len(row_i)//block_length)
+        if len(row_i)%block_length != 0:
+            list_len += 1
+        until_list_j = [x for x in list(range(list_len))]
+        temp_block = []
+        for j in until_list_j:
+            temp_block.append(row_i[j:j+block_length])
+        list_out.append(temp_block)
+    return(list_out)
 
 
 
