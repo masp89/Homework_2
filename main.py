@@ -3,7 +3,6 @@
 
 import sys
 from Crypto.Cipher import AES
-import numpy
 
 
 # Definiera, crypteringsläge, nycklar (128 bit) och ciphertexter.
@@ -25,7 +24,9 @@ c_raw = ['4ca00ff4c898d61e1edbf1800618fb2828a226d160dad07883d04e008a7897ee2e4b74
 
 def main(k_raw):
     check_len(k_raw, c_raw)
-    raw2list(k_raw)
+    k_str = raw2list(k_raw)
+    c_str = raw2list(c_raw)
+    print(k_str)
 
 print('Jämför storlek på nycklar och ciphertext')
 
@@ -39,10 +40,15 @@ def check_len(str1, str2):
 
 def raw2list(raw):
     final_list=[]
-    until_list = list(range(len(raw)))
-    for i in until_list:
-        temp_list = raw[i]
-        final_list.append(until_list)
+    until_list_i = list(range(len(raw)))
+    for i in until_list_i:
+        row_i = raw[i]
+        until_list_j = list(range(len(row_i)))
+        temp_chars_j = []
+        for j in until_list_j:
+            temp_chars_j.append(row_i[j])
+        final_list.append(temp_chars_j)
+    return(final_list)
 
     #for i in until_list:
 	#templist = list(raw[i])
