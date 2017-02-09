@@ -53,10 +53,10 @@ def cbc_full(iv_hex, key_hex, c_text_hex):
 
 def cbc_dec(iv_hex, key_hex, c_text_hex):
     print(iv_hex)
-    print(key_hex)
-    print(c_text_hex)
+    #print(key_hex)
+    #print(c_text_hex)
 
-    iv = binascii.unhexlify(iv_hex)
+    iv = int(iv_hex, 16)
 
 
 
