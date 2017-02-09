@@ -32,6 +32,9 @@ def main(k_raw):
     # Ta ut initieringsvektorn från varje ciphertext.
     i_vec = ivec(c_blocks)
 
+
+
+
     output = cbc_full(i_vec[0], k_blocks[0], c_blocks[0])
 
 
@@ -44,38 +47,48 @@ def main(k_raw):
 
 
 def cbc_full(iv_hex, key_hex, c_text_hex):
-    iv = iv_hex
+    key_hex = hex_clean(key_hex)
+    c_text_hex = hex_clean(c_text_hex)
+    iv_hex = hex_clean(iv_hex)
+    iv_hex = iv_hex[0]
     out = []
-    for i in list(range(len(c_text_hex))):
-        temp_plain = cbc_dec(iv, key_hex[0], c_text_hex[i])
-        iv = temp_plain
-        out.append(temp_plain)
+    iterations = list(range(len(c_text_hex)))
+    iterations = iterations[1:]
 
-def cbc_dec(iv_hex, key_hex, c_text_hex):
-    print(iv_hex)
-    #print(key_hex)
-    #print(c_text_hex)
-
-    iv = int(iv_hex, 16)
-
-
-
-    #key_str = "".join(key_hex)
-    #c_text_str = "".join(c_text_hex)
-    #iv_str = "".join(iv_hex)
-    #out = decrypt(key_bin, c_text_bin) ^ iv_bin
-    #return(out)
+    for i in iterations:
+        temp_plain = decrypt(key_hex[0], c_text_hex[i])
+        temp_plain_int = int(temp_plain, 16)
+        iv_hex_int = int(iv_hex, 16)
+        temp_plain_int = temp_plain_int ^ iv_hex_int
+        hex2string(hex(temp_plain_int))
+        out.append(hex(temp_plain_int))
+        iv_hex = hex(temp_plain_int)
+    print(out)
 
 
+def hex2string(hex_in):
+    out = []
+    hex_in = str(hex_in[2:])
+    iterations = list(range(len(hex_in)//2))
+    for i in iterations:
+        fp = 2*i
+        tp = fp + 2
+        out.append(chr(int(hex_in[fp:tp],16)))
+    print(out)
+
+def hex_clean(hex_list_in):
+    out = []
+    for i in list(range(len(hex_list_in))):
+        out.append(binascii.hexlify(binascii.unhexlify(hex_list_in[i])))
+    return(out)
 
 
 
-
-def ivec(raw):
+def ivec(c_blocks):
     i_vec = []
-    for x in list(range(len(raw))):
-        c_list = (raw[x])
-        i_vec.append(c_list[0])
+    for i in list(range(len(c_blocks))):
+        c_list = c_blocks[i]
+        i_vec.append([c_list[0]])
     return(i_vec)
 
 
@@ -122,8 +135,11 @@ def raw2blocks(raw):
     return(list_out)
 
 def decrypt(key, c_text):
+    #key = binascii.unhexlify(key)
+    #c_text = binascii.unhexlify(c_text)
     cipher = AES.new(key, AES.MODE_ECB)
     output = cipher.decrypt(c_text)
+    #output = binascii.hexlify(output)
     return(output)
 
 main(k_raw)
